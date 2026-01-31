@@ -22,18 +22,19 @@ PLAYER_HOP_HEIGHT = 0.35    # arc height for hop
 PLAYER_SQUASH_SCALE = 0.85  # squash at land
 INPUT_BUFFER_MAX = 1       # queued moves during hop
 
-# Camera (isometric / trailing)
-CAMERA_DISTANCE = 12.0
-CAMERA_HEIGHT = 8.0
-CAMERA_ANGLE = 35.0        # degrees from horizontal
+# Camera (isometric / trailing) – zoomed in to fill view and reduce blank areas
+CAMERA_DISTANCE = 6.5
+CAMERA_HEIGHT = 4.5
+CAMERA_ANGLE = 32.0        # degrees from horizontal
 CAMERA_SMOOTHING = 8.0     # follow speed (higher = snappier)
-CAMERA_LOOK_AHEAD = 2.0    # look slightly ahead of player
+CAMERA_LOOK_AHEAD = 1.5    # look slightly ahead of player
 
 # Lanes - generation
 LANES_AHEAD = 15           # lanes to generate in front
 LANES_BEHIND_CULL = 3      # cull lanes this many behind player
 MIN_SAFE_LANES = 2         # min grass between roads/rivers
-MAX_CONSECUTIVE_HAZARD = 2 # max roads/rivers in a row
+MAX_CONSECUTIVE_HAZARD = 2 # max roads/trains in a row
+MAX_CONSECUTIVE_RIVER = 3  # rivers can repeat (2–3 water lanes) so it looks like continuous water, not a train
 
 # Grass
 GRASS_BLOCKER_CHANCE = 0.15  # chance per tile for tree/rock
@@ -48,8 +49,8 @@ ROAD_VEHICLE_SPEED_MAX = 6.0
 ROAD_VEHICLES_PER_LANE_MIN = 1
 ROAD_VEHICLES_PER_LANE_MAX = 3
 
-# River
-RIVER_LANE_CHANCE = 0.2
+# River (repeated water lanes so it feels like ocean/rivers, not a single train-like strip)
+RIVER_LANE_CHANCE = 0.28
 RIVER_LOG_GAP_MIN = 1
 RIVER_LOG_GAP_MAX = 3
 RIVER_LOG_SPEED_MIN = 1.5

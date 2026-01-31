@@ -18,10 +18,16 @@ class Train:
         self.node = parent.attachNewNode("train")
         ts = settings.TILE_SIZE
         length = settings.TRAIN_LENGTH
+        # Bikini Bottom bus: yellow body, blue window strips
         for i in range(length):
-            seg = make_box(base.loader, ts * 0.9, ts * 0.6, ts * 0.8, Vec4(0.2, 0.2, 0.2, 1))
+            seg = make_box(base.loader, ts * 0.9, ts * 0.6, ts * 0.8, Vec4(0.95, 0.85, 0.25, 1))
             seg.reparentTo(self.node)
             seg.setX(i * ts - (length - 1) * ts / 2)
+            if i % 2 == 0:
+                win = make_box(base.loader, ts * 0.5, ts * 0.1, ts * 0.4, Vec4(0.4, 0.7, 0.95, 1))
+                win.reparentTo(self.node)
+                win.setX(i * ts - (length - 1) * ts / 2)
+                win.setY(ts * 0.5)
         self.lane_z = lane_z
         self.length = length
         self.half_length = (length * ts) / 2

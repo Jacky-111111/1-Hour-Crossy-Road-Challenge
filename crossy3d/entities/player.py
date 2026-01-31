@@ -35,12 +35,36 @@ class Player:
         self.alive = True
 
     def _build_visual(self, loader):
+        """SpongeBob-style character: yellow sponge body, brown shorts, big eyes, smile."""
         from world.tiles import make_box
         from panda3d.core import Vec4
         ts = settings.TILE_SIZE
-        body = make_box(loader, ts * 0.5, ts * 0.5, ts * 0.7, Vec4(1, 0.8, 0.4, 1))
+        # Sponge body (slightly rectangular, bright yellow)
+        body = make_box(loader, ts * 0.55, ts * 0.5, ts * 0.5, Vec4(1.0, 0.95, 0.3, 1))
         body.reparentTo(self.node)
-        body.setY(ts * 0.35)  # Y-up: lift so feet on ground
+        body.setY(ts * 0.25)
+        # Brown shorts / pants at bottom
+        pants = make_box(loader, ts * 0.5, ts * 0.45, ts * 0.18, Vec4(0.45, 0.25, 0.1, 1))
+        pants.reparentTo(self.node)
+        pants.setY(ts * 0.09)
+        # Left eye (white + blue pupil)
+        eye_l = make_box(loader, ts * 0.12, ts * 0.08, ts * 0.14, Vec4(1, 1, 1, 1))
+        eye_l.reparentTo(self.node)
+        eye_l.setPos(-ts * 0.12, ts * 0.55, ts * 0.08)
+        pupil_l = make_box(loader, ts * 0.06, ts * 0.04, ts * 0.06, Vec4(0.2, 0.5, 0.9, 1))
+        pupil_l.reparentTo(self.node)
+        pupil_l.setPos(-ts * 0.12, ts * 0.62, ts * 0.08)
+        # Right eye
+        eye_r = make_box(loader, ts * 0.12, ts * 0.08, ts * 0.14, Vec4(1, 1, 1, 1))
+        eye_r.reparentTo(self.node)
+        eye_r.setPos(ts * 0.12, ts * 0.55, ts * 0.08)
+        pupil_r = make_box(loader, ts * 0.06, ts * 0.04, ts * 0.06, Vec4(0.2, 0.5, 0.9, 1))
+        pupil_r.reparentTo(self.node)
+        pupil_r.setPos(ts * 0.12, ts * 0.62, ts * 0.08)
+        # Smile (wide pink mouth)
+        mouth = make_box(loader, ts * 0.25, ts * 0.04, ts * 0.06, Vec4(1.0, 0.4, 0.5, 1))
+        mouth.reparentTo(self.node)
+        mouth.setPos(0, ts * 0.42, -ts * 0.05)
         self.node.setPos(0, 0, 0)
 
     def get_grid_pos(self):

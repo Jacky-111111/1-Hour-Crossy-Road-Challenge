@@ -1,15 +1,24 @@
 """
-UI: start screen, HUD (score, best, FPS), game over screen.
+UI: start screen, HUD (score, best, FPS, controls), game over screen with Restart button.
 """
 
 from direct.gui.OnscreenText import OnscreenText
+from direct.gui.DirectButton import DirectButton
 from panda3d.core import TextNode
 
 import settings
 
 
+# One-line control reminders for HUD; full list for start/game over
+CONTROLS_HUD = "WASD / Arrows - Move  |  R - Restart  |  Esc - Quit"
+CONTROLS_FULL = [
+    "W / ↑ / Space - Forward    S / ↓ - Back    A / ← - Left    D / → - Right",
+    "Enter - Start / Confirm    R - Restart    Esc - Quit    F1 - Debug",
+]
+
+
 class UIManager:
-    """Start / HUD / Game over text overlays."""
+    """Start / HUD / Game over text overlays + Restart button."""
 
     def __init__(self, base):
         self.base = base
@@ -18,9 +27,12 @@ class UIManager:
         self._score_text = None
         self._best_text = None
         self._fps_text = None
+        self._controls_hud_text = None
         self._game_over_title = None
         self._game_over_score = None
         self._game_over_restart = None
+        self._restart_button = None
+        self._game_over_controls = []
         self._nodes = []
 
     def _make_text(
@@ -44,21 +56,35 @@ class UIManager:
         return node
 
     def show_start_screen(self):
-        """Press Enter to Start."""
+        """SpongeBob theme title + Press Enter to Start + all controls reminder."""
         self.hide_all()
         self._title = self._make_text(
-            "Crossy Road 3D",
-            pos=(0, 0.1),
-            scale=0.12,
+            "SpongeBob Crossy Road",
+            pos=(0, 0.2),
+            scale=0.11,
+            fg=(1.0, 0.95, 0.3, 1),
         )
         self._subtitle = self._make_text(
+            "Bikini Bottom 3D",
+            pos=(0, 0.08),
+            scale=0.055,
+            fg=(0.3, 0.7, 0.9, 1),
+        )
+        self._make_text(
             "Press ENTER to Start",
-            pos=(0, -0.1),
+            pos=(0, -0.02),
             scale=0.06,
         )
+        for i, line in enumerate(CONTROLS_FULL):
+            self._make_text(
+                line,
+                pos=(0, -0.22 - i * 0.06),
+                scale=0.035,
+                fg=(0.9, 0.9, 0.9, 1),
+            )
 
     def show_hud(self, score: int, best: int):
-        """Score and best; optionally FPS."""
+        """Score, best, FPS, and controls reminder."""
         self._score_text = self._make_text(
             f"Score: {score}",
             pos=(-1.3, 0.9),
@@ -81,6 +107,12 @@ class UIManager:
                 align=TextNode.A_right,
                 mayChange=True,
             )
+        self._controls_hud_text = self._make_text(
+            CONTROLS_HUD,
+            pos=(0, -0.92),
+            scale=0.032,
+            fg=(0.85, 0.85, 0.85, 1),
+        )
 
     def update_hud(self, score: int, best: int, fps: float = 0):
         if self._score_text:
@@ -90,36 +122,54 @@ class UIManager:
         if self._fps_text and settings.DEBUG_SHOW_FPS:
             self._fps_text.setText(f"FPS: {int(fps)}")
 
-    def show_game_over(self, score: int, best: int):
-        """Game over: score, best, R to Restart."""
+    def show_game_over(self, score: int, best: int, on_restart=None):
+        """Game over: score, best, Restart button, and all controls reminder."""
         self.hide_all()
         self._game_over_title = self._make_text(
             "GAME OVER",
-            pos=(0, 0.15),
+            pos=(0, 0.22),
             scale=0.1,
             fg=(1, 0.3, 0.3, 1),
         )
         self._game_over_score = self._make_text(
             f"Score: {score}  |  Best: {best}",
-            pos=(0, 0),
+            pos=(0, 0.08),
             scale=0.06,
         )
         self._game_over_restart = self._make_text(
-            "Press R to Restart",
-            pos=(0, -0.15),
-            scale=0.05,
+            "Press R or click Restart",
+            pos=(0, -0.02),
+            scale=0.045,
         )
+        if on_restart is not None:
+            self._restart_button = DirectButton(
+                text="Restart",
+                scale=0.06,
+                command=on_restart,
+                pos=(0, 0, -0.12),
+            )
+            self._nodes.append(self._restart_button)
+        for i, line in enumerate(CONTROLS_FULL):
+            self._make_text(
+                line,
+                pos=(0, -0.32 - i * 0.055),
+                scale=0.032,
+                fg=(0.85, 0.85, 0.85, 1),
+            )
 
     def hide_all(self):
-        """Remove all UI nodes."""
+        """Remove all UI nodes and the Restart button."""
         for node in self._nodes:
-            node.destroy()
+            if hasattr(node, "destroy"):
+                node.destroy()
         self._nodes = []
         self._title = None
         self._subtitle = None
         self._score_text = None
         self._best_text = None
         self._fps_text = None
+        self._controls_hud_text = None
         self._game_over_title = None
         self._game_over_score = None
         self._game_over_restart = None
+        self._restart_button = None

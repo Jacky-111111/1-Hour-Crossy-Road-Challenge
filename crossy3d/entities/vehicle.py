@@ -17,9 +17,13 @@ class Vehicle:
         self.parent = parent
         self.node = parent.attachNewNode("vehicle")
         ts = settings.TILE_SIZE
-        # Car: longer in X (direction of travel)
-        body = make_box(base.loader, ts * 1.2, ts * 0.6, ts * 0.5, Vec4(0.8, 0.2, 0.2, 1))
-        body.reparentTo(self.node)
+        # Boat-style (Bikini Bottom): white hull, blue cabin
+        hull = make_box(base.loader, ts * 1.15, ts * 0.55, ts * 0.25, Vec4(0.95, 0.95, 0.98, 1))
+        hull.reparentTo(self.node)
+        hull.setY(ts * 0.125)
+        cabin = make_box(base.loader, ts * 0.5, ts * 0.4, ts * 0.35, Vec4(0.3, 0.55, 0.85, 1))
+        cabin.reparentTo(self.node)
+        cabin.setY(ts * 0.35)
         self.node.setPos(grid_x * ts, 0, lane_z)
         self.lane_z = lane_z
         self.world_x = grid_x * ts

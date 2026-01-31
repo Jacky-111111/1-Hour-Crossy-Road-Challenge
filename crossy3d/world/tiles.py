@@ -56,18 +56,18 @@ def make_box(loader, width: float, depth: float, height: float, color: Vec4):
 
 
 def create_grass_tile(loader, parent: NodePath, x: float, z: float):
-    """One grass tile (green box) at world (x, z)."""
+    """One grass/sand tile (Bikini Bottom sandy green) at world (x, z)."""
     ts = settings.TILE_SIZE
-    box = make_box(loader, ts, ts, 0.1, Vec4(0.2, 0.6, 0.2, 1))
+    box = make_box(loader, ts, ts, 0.1, Vec4(0.35, 0.65, 0.4, 1))
     box.reparentTo(parent)
     box.setPos(x, 0, z)
     return box
 
 
 def create_road_tile(loader, parent: NodePath, x: float, z: float):
-    """One road tile (dark gray)."""
+    """One road tile (Bikini Bottom street: sandy brown)."""
     ts = settings.TILE_SIZE
-    box = make_box(loader, ts, ts, 0.08, Vec4(0.25, 0.25, 0.28, 1))
+    box = make_box(loader, ts, ts, 0.08, Vec4(0.5, 0.45, 0.35, 1))
     box.reparentTo(parent)
     box.setPos(x, 0, z)
     return box
@@ -83,21 +83,21 @@ def create_water_tile(loader, parent: NodePath, x: float, z: float):
 
 
 def create_water_lane_surface(loader, parent: NodePath, lane_z: float):
-    """One continuous water surface for the whole river lane (endless water look)."""
+    """One continuous water surface (Bikini Bottom ocean teal)."""
     ts = settings.TILE_SIZE
     width = settings.LANE_WIDTH * ts
     depth = ts
     center_x = (settings.LANE_WIDTH * ts) / 2
-    surface = make_box(loader, width, depth, 0.05, Vec4(0.2, 0.45, 0.85, 1))
+    surface = make_box(loader, width, depth, 0.05, Vec4(0.2, 0.65, 0.75, 1))
     surface.reparentTo(parent)
     surface.setPos(center_x, 0, lane_z)
     return surface
 
 
 def create_rail_tile(loader, parent: NodePath, x: float, z: float):
-    """Rail / train lane (dark with rail look)."""
+    """Train/bus lane (Bikini Bottom street dark)."""
     ts = settings.TILE_SIZE
-    box = make_box(loader, ts, ts, 0.06, Vec4(0.15, 0.15, 0.15, 1))
+    box = make_box(loader, ts, ts, 0.06, Vec4(0.35, 0.38, 0.4, 1))
     box.reparentTo(parent)
     box.setPos(x, 0, z)
     return box

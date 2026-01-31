@@ -37,7 +37,7 @@ loadPrcFileData("", f"fullscreen {'true' if settings.FULLSCREEN else 'false'}")
 class GameApp(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
-        self.setBackgroundColor(0.5, 0.6, 0.8, 1)
+        self.setBackgroundColor(0.4, 0.75, 0.95, 1)  # Bikini Bottom sky/ocean blue
         self.disableMouse()
         self.accept("escape", self.quit_game)
         # Match camera lens aspect ratio to window so 3D fills the window (no letterboxing)
@@ -189,10 +189,7 @@ class GameApp(ShowBase):
             for x in range(settings.LANE_WIDTH):
                 world_tiles.create_grass_tile(self.loader, root, x * ts, lane_z)
             for (gx, gz) in lane.blocked_tiles:
-                if random.random() < 0.6:
-                    world_obstacles.create_tree(self.loader, root, gx * ts, lane_z)
-                else:
-                    world_obstacles.create_rock(self.loader, root, gx * ts, lane_z)
+                world_obstacles.create_bikini_bottom_prop(self.loader, root, gx * ts, lane_z)
         elif isinstance(lane, RoadLane):
             for x in range(settings.LANE_WIDTH):
                 world_tiles.create_road_tile(self.loader, root, x * ts, lane_z)
@@ -225,12 +222,21 @@ class GameApp(ShowBase):
                 start_x = (x + length / 2) * ts
                 log = Log(self, root, lane_z, start_x, length, lane.direction, lane.speed)
                 entities.append(log)
-                x += length + random.randint(settings.RIVER_LOG_GAP_MIN, settings.RIVER_LOG_GAP_MAX)
-            if not entities:
+                gap = random.randint(settings.RIVER_LOG_GAP_MIN, settings.RIVER_LOG_GAP_MAX)
+                x += length + gap
+            # Guarantee at least 2 logs so river is always crossable (logs also wrap)
+            if len(entities) == 0:
                 length = min(log_len_max, settings.LANE_WIDTH)
                 start_x = (settings.LANE_WIDTH / 2) * ts
                 log = Log(self, root, lane_z, start_x, length, lane.direction, lane.speed)
                 entities.append(log)
+            if len(entities) == 1:
+                # Add a second log offset so there's always coverage as they move
+                length = random.randint(log_len_min, log_len_max)
+                length = min(length, settings.LANE_WIDTH)
+                start_x = (settings.LANE_WIDTH * 0.25) * ts if lane.direction > 0 else (settings.LANE_WIDTH * 0.75) * ts
+                log2 = Log(self, root, lane_z, start_x, length, lane.direction, lane.speed)
+                entities.append(log2)
         elif isinstance(lane, TrainLane):
             for x in range(settings.LANE_WIDTH):
                 world_tiles.create_rail_tile(self.loader, root, x * ts, lane_z)
@@ -301,6 +307,18 @@ class GameApp(ShowBase):
             if direction:
                 self.input_mgr.push_direction(direction)
 
+    def _is_tile_on_log(self, grid_x: int, grid_z: int) -> bool:
+        """True if (grid_x, grid_z) is currently covered by a log (required to stand on water)."""
+        ts = settings.TILE_SIZE
+        center_x = grid_x * ts
+        center_z = grid_z * ts
+        for log in self.logs:
+            if abs(log.lane_z - center_z) > ts * 0.5:
+                continue
+            if log.contains_point(center_x, center_z):
+                return True
+        return False
+
     def _try_player_move(self, direction: str):
         def is_blocked(nx, nz):
             if nx < 0 or nx >= settings.LANE_WIDTH:
@@ -310,6 +328,11 @@ class GameApp(ShowBase):
             for (z_idx, lane, _n, _e) in self.lanes:
                 if z_idx != nz:
                     continue
+                if isinstance(lane, RiverLane):
+                    # Crossy Road rule: can only step onto water if a log/block is under that tile
+                    if not self._is_tile_on_log(nx, nz):
+                        return True
+                    break
                 if lane.is_blocked(nx):
                     return True
             return False
@@ -421,7 +444,7 @@ class GameApp(ShowBase):
         else:
             self.audio.play_death()
         self.state = GameState.GAME_OVER
-        self.ui.show_game_over(self.score, self.best_score)
+        self.ui.show_game_over(self.score, self.best_score, on_restart=self._on_restart)
 
     def quit_game(self):
         self.userExit()

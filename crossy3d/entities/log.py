@@ -17,9 +17,9 @@ class Log:
         self.parent = parent
         self.node = parent.attachNewNode("log")
         ts = settings.TILE_SIZE
-        # Length in tiles (X), thin in Y, low height
+        # Raft / wooden plank (Bikini Bottom style)
         w = length_tiles * ts
-        body = make_box(base.loader, w, ts * 0.5, ts * 0.25, Vec4(0.4, 0.25, 0.1, 1))
+        body = make_box(base.loader, w, ts * 0.5, ts * 0.25, Vec4(0.55, 0.38, 0.2, 1))
         body.reparentTo(self.node)
         self.lane_z = lane_z
         self.world_x = start_x
@@ -31,6 +31,15 @@ class Log:
 
     def update(self, dt: float):
         self.world_x += self.direction * self.speed * dt
+        # Wrap so logs cycle in the lane – there's always a log the player can use
+        ts = settings.TILE_SIZE
+        lane_width = settings.LANE_WIDTH * ts
+        if self.direction > 0:
+            if self.world_x > lane_width + self.half_length:
+                self.world_x = -self.half_length
+        else:
+            if self.world_x < -self.half_length:
+                self.world_x = lane_width + self.half_length
         self.node.setX(self.world_x)
 
     def get_bounds(self):
