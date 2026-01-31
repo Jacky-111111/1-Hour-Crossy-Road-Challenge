@@ -1,9 +1,12 @@
-I used ChatGPT 5.2 Thinking Mode to generate a detailed building prompt for Cursor to use. Cursor selects its own LLM model automatically. It ended up using Panda3D. 
-I found spent a lot of time fixing the fundamental game rules and asked Cursor to choose SpongeBob theme as the previously auto-generated Box theme was too boring. I thought that modern LLMs were smart enough to generate a 3D version of Crossy Road directly, so I skipped the 2D version, but it seems there is still a long way to go. The result I got at the end of 1-hour isn't satifactory; it's not fun to play with, and although the main character is controllable, the blocks sometimes violate the game rules.
+I used ChatGPT 5.2 Thinking Mode to generate a detailed building prompt for Cursor to use. Cursor selects its own LLM model during conversations. It ended up using Panda3D to build the game. 
+I spent a lot of time fixing the fundamental game rules and asked Cursor to use SpongeBob theme since the previously auto-generated Cube theme was too boring. 
+I thought that modern LLMs were smart enough to generate a 3D version of Crossy Road directly, so I skipped the 2D version, but it seems there is still a long way to go. 
+The result I got at the end of 1-hour isn't satifactory; it's not fun to play with, and although the main character is controllable, the blocks sometimes violate the game rules.
 
 
-----------------------------------------
-----------------------------------------
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
 
 Conversation with ChatGPT:
 My prompt:
@@ -239,10 +242,9 @@ Now produce the full codebase content (all files), with instructions to run, and
 If you want, I can also generate a **“more aggressive” Cursor prompt** that explicitly tells it to *not stop until everything in Acceptance Criteria is implemented*, plus a debugging checklist for common 3D/collision pitfalls.
 
 
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
-
-----------------------------------------
-----------------------------------------
 
 Conversation log with Cursor:
 # Python Crossy Road clone with Panda3D
